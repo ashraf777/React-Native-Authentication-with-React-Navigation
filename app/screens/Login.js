@@ -9,7 +9,8 @@ import {
     StyleSheet, 
     AsyncStorage
 } from 'react-native';
-import { StackNavigator } from 'react-navigation';
+
+import { StackNavigator, NavigationActions } from 'react-navigation';
 
 import PropTypes from 'prop-types';
 
@@ -20,6 +21,12 @@ import { Logo } from '../components/Logo';
 
 const ACCESS_TOKEN = 'access_token';
 
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Main'})
+    ]
+})
 
 class Login extends React.Component {
     constructor(props){
@@ -42,6 +49,7 @@ class Login extends React.Component {
             this.props.navigation.navigate('Main'); 
         }
     }
+    
 
     async storeToken(accessToken) {
         try {
@@ -81,7 +89,11 @@ class Login extends React.Component {
                 let accessToken = res.accesstoken;
                 this.storeToken(accessToken);                       
                 console.log("Response success is: " + accessToken); 
-                this.props.navigation.navigate('Main');
+                if(!accessToken) {
+                    this.props.navigation.navigate('Home');
+                } else {
+                    this.props.navigation.dispatch(resetAction);
+                }
             } else {
                 let error = res;
                 throw error;

@@ -11,11 +11,20 @@ import {
     AsyncStorage 
 } from 'react-native';
 
+import { NavigationActions } from 'react-navigation';
+
 import { Logo } from '../components/Logo';
 
 import { styles } from '../components/Forms';
 
 const ACCESS_TOKEN = 'access_token';
+
+const resetAction = NavigationActions.reset({
+    index: 0,
+    actions: [
+        NavigationActions.navigate({ routeName: 'Main'})
+    ]
+})
 
 class Registration extends React.Component {
     constructor(props){
@@ -78,8 +87,13 @@ class Registration extends React.Component {
                 this.setState({error: ""});
                 let accessToken = res.accesstoken;
                 this.storeToken(accessToken);                       
-                console.log("Response success is: " + accessToken); 
-                this.props.navigation.navigate('Main');
+                console.log("Response success is: " + accessToken);
+                if(!accessToken) {
+                    this.props.navigation.navigate('Home');
+                } else {
+                    this.props.navigation.dispatch(resetAction);
+                }
+                
             } else {
                 let error = res;
                 throw error;
